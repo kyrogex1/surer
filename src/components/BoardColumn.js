@@ -10,15 +10,15 @@ const BoardColumn = props => {
     
     const renderBoardCards = () => {
         return (
-            props.cards.map((card, index) => {
+            props.column.cards.map((card, index) => {
                 return (
                     <BoardCard
                     cardTitle={card.title}
                     cardDescription={card.description}
                     modifyCard={(cardTitle, cardDescription) => {
-                        props.modifyCard(props.columnTitle, cardTitle, cardDescription, index)
+                        props.modifyCard(props.columnIndex, cardTitle, cardDescription, index)
                     }}
-                    deleteCard={() => props.deleteCard(props.columnTitle, index)}
+                    deleteCard={() => props.deleteCard(props.columnIndex, index)}
                     />
                 ) 
             })
@@ -30,7 +30,7 @@ const BoardColumn = props => {
         setNewTitle("");
         setNewDescription("");
 
-        props.addCardToColumn(props.columnTitle, newTitle, newDescription);
+        props.addCardToColumn(props.columnIndex, newTitle, newDescription);
     }
 
     return (
@@ -38,7 +38,7 @@ const BoardColumn = props => {
             <div className="card bg-light" style={{width : "18rem"}}>
                 <div className="card-body">
                     <div className="d-flex">
-                        <h5 className="card-title mb-2 mr-auto">{props.columnTitle}</h5>
+                        <h5 className="card-title mb-2 mr-auto">{props.column.columnTitle}</h5>
                         <i class="far fa-trash-alt my-auto" style={{color : "red"}}/>
                     </div>
                     {renderBoardCards()}
@@ -52,7 +52,7 @@ const BoardColumn = props => {
             </div>
             <Modal show={show} onHide={() => setShow(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{`New card to ${props.columnTitle}`}</Modal.Title>
+                    <Modal.Title>{`New card to ${props.column.columnTitle}`}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="form-group">

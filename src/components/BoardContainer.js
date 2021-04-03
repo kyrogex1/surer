@@ -1,69 +1,79 @@
 import React, { useState } from 'react';
 import BoardColumn from './BoardColumn';
+import {v4 as uuid} from 'uuid';
 
-const initialColumns = {
-    frontend : [
-        {
-        title : "Complete List Component",
-        description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
-        },
-        {
-        title : "Complete List Component",
-        description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
-        },
-        {
-        title : "Complete List Component",
-        description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
-        },
-    ],
-    backend : [
-        {
-        title : "Complete List Component",
-        description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
-        },
-        {
-        title : "Complete List Component",
-        description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
-        },
-        {
-        title : "Complete List Component",
-        description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
-        },
-    ]     
-}
+const initialColumns = [
+    {   id : uuid(),
+        columnTitle : "frontend",
+        cards : [
+            {
+            id : (uuid()),
+            title : "Complete List Component",
+            description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
+            },
+            {
+            id : (uuid()),
+            title : "Complete List Component",
+            description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
+            },
+            {
+            id : (uuid()),
+            title : "Complete List Component",
+            description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
+            },
+        ]
+    },
+    {   id : uuid(),
+        columnTitle : "Backend",
+        cards : [
+            {
+            id : (uuid()),
+            title : "Complete List Component",
+            description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
+            },
+            {
+            id : (uuid()),
+            title : "Complete List Component",
+            description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
+            },
+            {
+            id : (uuid()),
+            title : "Complete List Component",
+            description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
+            },
+        ]
+    },
+]
 
 const BoardContainer = props => {
-
     const [columns, setColumns] = useState(initialColumns);
 
-    const addCardToColumn = (columnName, cardTitle, cardDescription) => {
-        const updatedArray = [...columns[columnName], {title : cardTitle, description : cardDescription}]
-        const updatedColumns = {...columns};
-        updatedColumns[columnName] = updatedArray;
+    const addCardToColumn = (columnIndex, cardTitle, cardDescription) => {
+        const updatedArray = [...columns[columnIndex].cards, {id : uuid(), title : cardTitle, description : cardDescription}];
+        const updatedColumns = [...columns];
+        updatedColumns.splice(columnIndex, 1, {...columns[columnIndex], cards : updatedArray});
         setColumns(updatedColumns);
     }
 
-    const modifyCard = (columnName, cardTitle, cardDescription, index) => {
-        const updatedCard = [...columns[columnName]][index]
-        updatedCard["title"] = cardTitle;
-        updatedCard["description"] = cardDescription;
-        const updatedColumns = {...columns};
-        updatedColumns[columnName][index] = updatedCard;
+    const modifyCard = (columnIndex, cardTitle, cardDescription, cardIndex) => {
+        const updatedColumns = [...columns];
+        updatedColumns[columnIndex].cards[cardIndex].title = cardTitle;
+        updatedColumns[columnIndex].cards[cardIndex].description = cardDescription;
+        console.log(updatedColumns);
         setColumns(updatedColumns);
     }
 
-    const deleteCard = (columnName, index) => {
-        const updatedColumns = {...columns};
-        updatedColumns[columnName].splice(index, 1);
+    const deleteCard = (columnIndex, cardIndex) => {
+        const updatedColumns = [...columns];
+        updatedColumns[columnIndex].cards.splice(cardIndex, 1);
         setColumns(updatedColumns);
     }
 
     const renderColumns = () => {
-        const keys = Object.keys(columns);
         return (
-            keys.map(key => {
+            columns.map((column, index) => {
                 return (
-                    <BoardColumn cards={columns[key]} columnTitle={key} key={key} addCardToColumn={addCardToColumn} modifyCard={modifyCard} deleteCard={deleteCard}/>
+                    <BoardColumn column={column} columnIndex={index} key={column.id} addCardToColumn={addCardToColumn} modifyCard={modifyCard} deleteCard={deleteCard}/>
                 )
             })
         )
