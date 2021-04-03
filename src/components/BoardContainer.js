@@ -74,6 +74,10 @@ const BoardContainer = props => {
         const updatedColumns = [...columns]
         const sourceColumn = updatedColumns.find(column => column.id === source.droppableId);
         const sourceItem = sourceColumn.cards[source.index];
+
+        console.log(destination);
+        if (!destination)
+            return;
         
         if (source.droppableId === destination.droppableId)
             if (source.index === destination.droppableId)
@@ -101,10 +105,25 @@ const BoardContainer = props => {
         )
     }
 
+    const addNewColumn = () => {
+        const newColumn = {
+            id : uuid(),
+            columnTitle : uuid(),
+            cards : [],
+        };
+        setColumns([...columns, newColumn]);
+    }
+
     return (
         <DragDropContext onDragEnd={onDragEnd}>
-            <div className="w-100 d-flex mt-4">
+            <div className="w-100 d-flex mt-4" style={{overflowX : 'auto'}}>
                 {renderColumns()}
+                <div className="card p-2 align-self-start" onClick={addNewColumn} style={{width : "18rem"}}>
+                    <h6 className="card-title my-1 mr-auto text-success">
+                        Add New Column
+                        <i className="fas fa-plus ml-2" />
+                    </h6>
+                </div>
             </div>
         </DragDropContext>
     )
