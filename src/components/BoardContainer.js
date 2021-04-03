@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import BoardColumn from './BoardColumn';
 import {v4 as uuid} from 'uuid';
+import { DragDropContext } from 'react-beautiful-dnd';
 
 const initialColumns = [
     {   id : uuid(),
@@ -8,17 +9,17 @@ const initialColumns = [
         cards : [
             {
             id : (uuid()),
-            title : "Complete List Component",
+            title : "Task 1",
             description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
             },
             {
             id : (uuid()),
-            title : "Complete List Component",
+            title : "Task 2",
             description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
             },
             {
             id : (uuid()),
-            title : "Complete List Component",
+            title : "Task 3",
             description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
             },
         ]
@@ -28,17 +29,17 @@ const initialColumns = [
         cards : [
             {
             id : (uuid()),
-            title : "Complete List Component",
+            title : "Task 4",
             description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
             },
             {
             id : (uuid()),
-            title : "Complete List Component",
+            title : "Task 5",
             description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
             },
             {
             id : (uuid()),
-            title : "Complete List Component",
+            title : "Task 6",
             description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
             },
         ]
@@ -69,6 +70,27 @@ const BoardContainer = props => {
         setColumns(updatedColumns);
     }
 
+    const onDragEnd = ({source, destination}) => {
+        const updatedColumns = [...columns]
+        const sourceColumn = updatedColumns.find(column => column.id === source.droppableId);
+        const sourceItem = sourceColumn.cards[source.index];
+        
+        if (source.droppableId === destination.droppableId)
+            if (source.index === destination.droppableId)
+                return;
+            else {
+                sourceColumn.cards.splice(source.index, 1);
+                sourceColumn.cards.splice(destination.index, 0, sourceItem);
+            }
+        else {
+            sourceColumn.cards.splice(source.index, 1);
+            const destinationColumn = updatedColumns.find(column => column.id === destination.droppableId);
+            destinationColumn.cards.splice(destination.index, 0, sourceItem);
+        }
+        setColumns(updatedColumns);
+
+    }
+
     const renderColumns = () => {
         return (
             columns.map((column, index) => {
@@ -80,9 +102,11 @@ const BoardContainer = props => {
     }
 
     return (
-        <div className="w-100 d-flex mt-4">
-            {renderColumns()}
-        </div>
+        <DragDropContext onDragEnd={onDragEnd}>
+            <div className="w-100 d-flex mt-4">
+                {renderColumns()}
+            </div>
+        </DragDropContext>
     )
 }
 

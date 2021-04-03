@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import { Draggable } from 'react-beautiful-dnd';
 
 const BoardCard = props => {
 
@@ -9,8 +10,8 @@ const BoardCard = props => {
 
     const handleOnEditClick = () => {
         setShow(true);
-        setNewTitle(props.cardTitle);
-        setNewDescription(props.cardDescription);
+        setNewTitle(props.card.title);
+        setNewDescription(props.card.description);
     }
 
     const handleOnEditSave = () => {
@@ -24,21 +25,35 @@ const BoardCard = props => {
         }
     }
 
-    return (
-        <React.Fragment>
-            <div class="card mb-3 p-2">
-                <div class="d-flex">
-                    <h6 class="card-title my-1 mr-auto">{props.cardTitle}</h6>
-                    <i class="far fa-trash-alt my-auto"
+    const draggableFunc = (provided, snapshot) => {
+        return (
+            <div 
+            className={`card mb-3 p-2 ${snapshot.isDragging ? "bg-success" : ""}`}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            ref={provided.innerRef}
+            >
+                <div className="d-flex">
+                    <h6 className="card-title my-1 mr-auto">{props.card.title}</h6>
+                    <i className="far fa-trash-alt my-auto"
                     style={{color : "red"}}
                     onClick={handleOnDeleteClick}
                     />
-                    <i class="fas fa-pencil-alt my-auto ml-2"
+                    <i className="fas fa-pencil-alt my-auto ml-2"
                     style={{color : "red"}}
                     onClick={handleOnEditClick}
                     />
                 </div>
             </div>
+
+        )
+    }
+
+    return (
+        <React.Fragment>
+            <Draggable draggableId={props.card.id} index={props.index}>
+                {draggableFunc}
+            </Draggable>
             <Modal show={show} onHide={() => setShow(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>{`Editting card`}</Modal.Title>
