@@ -26,6 +26,7 @@ const BoardCard = props => {
     }
 
     const draggableFunc = (provided, snapshot) => {
+        
         return (
             <div 
             className={`card mb-3 p-2 ${snapshot.isDragging ? "bg-success" : ""}`}

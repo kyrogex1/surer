@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import BoardColumn from './BoardColumn';
 import {v4 as uuid} from 'uuid';
-import { DragDropContext } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
 const initialColumns = [
     {   id : uuid(),
@@ -70,28 +70,40 @@ const BoardContainer = props => {
         setColumns(updatedColumns);
     }
 
-    const onDragEnd = ({source, destination}) => {
-        const updatedColumns = [...columns]
-        const sourceColumn = updatedColumns.find(column => column.id === source.droppableId);
-        const sourceItem = sourceColumn.cards[source.index];
+    const onDragEnd = (result) => {
 
-        console.log(destination);
-        if (!destination)
-            return;
-        
-        if (source.droppableId === destination.droppableId)
-            if (source.index === destination.droppableId)
+        const source = result.source;
+        const destination = result.destination;
+        const updatedColumns = [...columns]
+
+            if (!destination)
                 return;
+
+        if (result.type === "column"){
+            updatedColumns.splice(source.index, 1);
+            updatedColumns.splice(destination.index, 0, columns[source.index]);
+            setColumns(updatedColumns);
+            return;
+        }
+        
+        else {
+            const sourceColumn = updatedColumns.find(column => column.id === source.droppableId);
+            const sourceItem = sourceColumn.cards[source.index];
+            
+            if (source.droppableId === destination.droppableId)
+                if (source.index === destination.droppableId)
+                    return;
+                else {
+                    sourceColumn.cards.splice(source.index, 1);
+                    sourceColumn.cards.splice(destination.index, 0, sourceItem);
+                }
             else {
                 sourceColumn.cards.splice(source.index, 1);
-                sourceColumn.cards.splice(destination.index, 0, sourceItem);
+                const destinationColumn = updatedColumns.find(column => column.id === destination.droppableId);
+                destinationColumn.cards.splice(destination.index, 0, sourceItem);
             }
-        else {
-            sourceColumn.cards.splice(source.index, 1);
-            const destinationColumn = updatedColumns.find(column => column.id === destination.droppableId);
-            destinationColumn.cards.splice(destination.index, 0, sourceItem);
+            setColumns(updatedColumns);
         }
-        setColumns(updatedColumns);
 
     }
 
@@ -117,13 +129,20 @@ const BoardContainer = props => {
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <div className="w-100 d-flex mt-4" style={{overflowX : 'auto'}}>
-                {renderColumns()}
-                <div className="card p-2 align-self-start" onClick={addNewColumn} style={{width : "18rem"}}>
-                    <h6 className="card-title my-1 mr-auto text-success">
-                        Add New Column
-                        <i className="fas fa-plus ml-2" />
-                    </h6>
-                </div>
+                <Droppable droppableId="AllColumns" type="column" direction="horizontal"> 
+                {(provided) => (
+                    <div className="d-flex" {...provided.droppableProps} ref={provided.innerRef}>      
+                        {renderColumns()}
+                        {provided.placeholder}
+                        <div className="card p-2 align-self-start" onClick={addNewColumn} style={{width : "18rem"}}>
+                            <h6 className="card-title my-1 mr-auto text-success">
+                                Add New Column
+                                <i className="fas fa-plus ml-2" />
+                            </h6>
+                        </div>
+                    </div>
+                )}
+                </Droppable>
             </div>
         </DragDropContext>
     )

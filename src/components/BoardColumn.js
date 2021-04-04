@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import BoardCard from './BoardCard';
 import { Modal, Button } from 'react-bootstrap';
-import { Droppable } from 'react-beautiful-dnd';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 
 const BoardColumn = props => {
 
@@ -39,10 +39,16 @@ const BoardColumn = props => {
     const droppableFunc = (provided, snapshot) => {
         setIsDraggingOver(snapshot.isDraggingOver);
 
+        const style = {
+            minHeight : "50px",
+            ...provided.droppableProps.style
+        }
+
         return (
             <div
             {...provided.droppableProps}
             ref={provided.innerRef}
+            style={style}
             >
                 {renderBoardCards()}
             {provided.placeholder}
@@ -50,15 +56,21 @@ const BoardColumn = props => {
         )
     }
 
-    return (
-        <div className="mx-3">
-            <div className={`card ${isDraggingOver ? "bg-warning" : "bg-light"}`} style={{width : "18rem"}}>
+    const draggableFunc = (provided) => {
+        const style = {
+            width : "18rem",
+            transition : "background-color 1s ease",
+            ...provided.draggableProps.style,
+        };
+
+        return (
+            <div className={`card ${isDraggingOver ? "bg-warning" : "bg-light"}`} {...provided.draggableProps} style={style}  ref={provided.innerRef} >
                 <div className="card-body">
                     <div className="d-flex">
-                        <h5 className="card-title mb-2 mr-auto">{props.column.columnTitle}</h5>
+                        <h5 className="card-title mb-2 mr-auto" {...provided.dragHandleProps}>{props.column.columnTitle}</h5>
                         <i className="far fa-trash-alt my-auto" style={{color : "red"}}/>
                     </div>
-                    <Droppable droppableId={props.column.id}>
+                    <Droppable droppableId={props.column.id} index={props.columnIndex}>
                         {droppableFunc}
                     </Droppable>
                     <div className="card p-2" onClick={() => setShow(true)}>
@@ -69,6 +81,14 @@ const BoardColumn = props => {
                     </div>
                 </div>
             </div>
+        )
+    }
+
+    return (
+        <div className="mx-3">
+            <Draggable draggableId={props.column.id} index={props.columnIndex}>
+                {draggableFunc}
+            </Draggable>
             <Modal show={show} onHide={() => setShow(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>{`New card to ${props.column.columnTitle}`}</Modal.Title>
