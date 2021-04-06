@@ -16,10 +16,7 @@ const Header = props => {
                             <a className="nav-link" href="#">Home</a>
                         </li> */}
                     </ul>
-                    <form className="form-inline my-2">
-                        <input className="form-control mx-2" type="search" placeholder="search" />
-                        <button className="btn btn-success" type="submit">Search</button>
-                    </form>
+                    {props.children}
                 </div>
         </nav>
     )

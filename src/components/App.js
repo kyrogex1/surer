@@ -4,11 +4,8 @@ import BoardContainer from './BoardContainer';
 
 const App = props => {
 
-    return (
-        <div>
-            <Header />
-            <BoardContainer/>
-        </div>
+    return (    
+        <BoardContainer/>
     );
 }
 

@@ -11,6 +11,11 @@ const BoardColumn = props => {
     const [newDescription, setNewDescription] = useState("");
     
     const renderBoardCards = () => {
+        if (props.column.cards.length === 0)
+            return (
+                <p className="text-center h5 mt-3">This column is empty</p>
+            )
+
         return (
             props.column.cards.map((card, index) => {
                 return (
@@ -39,16 +44,10 @@ const BoardColumn = props => {
     const droppableFunc = (provided, snapshot) => {
         setIsDraggingOver(snapshot.isDraggingOver);
 
-        const style = {
-            minHeight : "50px",
-            ...provided.droppableProps.style
-        }
-
         return (
             <div
             {...provided.droppableProps}
             ref={provided.innerRef}
-            style={style}
             >
                 {renderBoardCards()}
             {provided.placeholder}
@@ -67,18 +66,29 @@ const BoardColumn = props => {
             <div className={`card ${isDraggingOver ? "bg-warning" : "bg-light"}`} {...provided.draggableProps} style={style}  ref={provided.innerRef} >
                 <div className="card-body">
                     <div className="d-flex">
-                        <h5 className="card-title mb-2 mr-auto" {...provided.dragHandleProps}>{props.column.columnTitle}</h5>
-                        <i className="far fa-trash-alt my-auto" style={{color : "red"}}/>
+                        <h5 className="card-title mb-2 flex-grow-1" {...provided.dragHandleProps}>{props.column.columnTitle}</h5>
+                        <div className="btn-group-sm btnGroupVisibleOnHover flex-shrink-0">
+                            <button className="btn">
+                                <i className="far fa-trash-alt my-auto"
+                                style={{color : "red"}}
+                                onClick={props.deleteColumn}
+                                />
+                            </button>
+                            <button className="btn">
+                                <i className="fas fa-pencil-alt my-auto ml-2"
+                                style={{color : "blue"}}
+                                onClick={() => 5} 
+                                />
+                            </button>
+                        </div>
                     </div>
                     <Droppable droppableId={props.column.id} index={props.columnIndex}>
                         {droppableFunc}
                     </Droppable>
-                    <div className="card p-2" onClick={() => setShow(true)}>
-                        <h6 className="card-title my-1 mr-auto text-success">
-                            Add New Card
-                            <i className="fas fa-plus ml-2" />
-                        </h6>
-                    </div>
+                    <button className="btn btn-block btn-outline-success mt-3" onClick={() => setShow(true)}>
+                        Add New Card
+                        <i className="fas fa-plus ml-2" />
+                    </button>
                 </div>
             </div>
         )

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { Draggable } from 'react-beautiful-dnd';
+import './BoardCard.css';
 
 const BoardCard = props => {
 
@@ -29,21 +30,27 @@ const BoardCard = props => {
         
         return (
             <div 
-            className={`card mb-3 p-2 ${snapshot.isDragging ? "bg-success" : ""}`}
+            className={`card mb-3 p-2 ${snapshot.isDragging ? "bg-success" : ""} boardCard`}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             ref={provided.innerRef}
             >
                 <div className="d-flex">
-                    <h6 className="card-title my-1 mr-auto">{props.card.title}</h6>
-                    <i className="far fa-trash-alt my-auto"
-                    style={{color : "red"}}
-                    onClick={handleOnDeleteClick}
-                    />
-                    <i className="fas fa-pencil-alt my-auto ml-2"
-                    style={{color : "red"}}
-                    onClick={handleOnEditClick}
-                    />
+                    <h6 className="card-title my-1 mr-auto flex-grow-1">{props.card.title}</h6>
+                    <div className="btn-group-sm btnGroupVisibleOnHover flex-shrink-0">
+                        <button className="btn">
+                            <i className="far fa-trash-alt my-auto"
+                            style={{color : "red"}}
+                            onClick={handleOnDeleteClick}
+                            />
+                        </button>
+                        <button className="btn">
+                            <i className="fas fa-pencil-alt my-auto ml-2"
+                            style={{color : "blue"}}
+                            onClick={handleOnEditClick} 
+                            />
+                        </button>
+                    </div>
                 </div>
             </div>
 

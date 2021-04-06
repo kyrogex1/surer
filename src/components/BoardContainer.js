@@ -2,54 +2,19 @@ import React, { useState } from 'react';
 import BoardColumn from './BoardColumn';
 import {v4 as uuid} from 'uuid';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-
-const initialColumns = [
-    {   id : uuid(),
-        columnTitle : "frontend",
-        cards : [
-            {
-            id : (uuid()),
-            title : "Task 1",
-            description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
-            },
-            {
-            id : (uuid()),
-            title : "Task 2",
-            description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
-            },
-            {
-            id : (uuid()),
-            title : "Task 3",
-            description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
-            },
-        ]
-    },
-    {   id : uuid(),
-        columnTitle : "Backend",
-        cards : [
-            {
-            id : (uuid()),
-            title : "Task 4",
-            description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
-            },
-            {
-            id : (uuid()),
-            title : "Task 5",
-            description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
-            },
-            {
-            id : (uuid()),
-            title : "Task 6",
-            description : "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam architecto delectus autem natus veritatis repellat officiis? Voluptates ex tenetur molestiae et, esse nemo. Cupiditate, placeat animi labore facilis harum debitis sunt officia dolorem voluptatibus impedit fugit natus. Sed, provident? Adipisci minima quibusdam a tempore explicabo aliquid doloremque vel corporis."
-            },
-        ]
-    },
-]
+import Header from './Header';
+import initialColumns from '../initialColumns';
+import _ from 'lodash';
 
 const BoardContainer = props => {
     const [columns, setColumns] = useState(initialColumns);
+    const [maxCardsIndex, setMaxCardsIndex] = useState(0);
 
     const addCardToColumn = (columnIndex, cardTitle, cardDescription) => {
+        if (columns[columnIndex].cards.length >= props.maxCardsArray[maxCardsIndex]){
+            alert(`Cant add anymore cards. This column has reached a limit of  ${props.maxCardsArray[maxCardsIndex]} cards. Please change the limit before adding`)
+            return;
+        }
         const updatedArray = [...columns[columnIndex].cards, {id : uuid(), title : cardTitle, description : cardDescription}];
         const updatedColumns = [...columns];
         updatedColumns.splice(columnIndex, 1, {...columns[columnIndex], cards : updatedArray});
@@ -71,13 +36,12 @@ const BoardContainer = props => {
     }
 
     const onDragEnd = (result) => {
-
         const source = result.source;
         const destination = result.destination;
-        const updatedColumns = [...columns]
+        const updatedColumns = _.cloneDeep(columns);
 
-            if (!destination)
-                return;
+        if (!destination)
+            return;
 
         if (result.type === "column"){
             updatedColumns.splice(source.index, 1);
@@ -91,7 +55,7 @@ const BoardContainer = props => {
             const sourceItem = sourceColumn.cards[source.index];
             
             if (source.droppableId === destination.droppableId)
-                if (source.index === destination.droppableId)
+                if (source.index === destination.index)
                     return;
                 else {
                     sourceColumn.cards.splice(source.index, 1);
@@ -101,17 +65,28 @@ const BoardContainer = props => {
                 sourceColumn.cards.splice(source.index, 1);
                 const destinationColumn = updatedColumns.find(column => column.id === destination.droppableId);
                 destinationColumn.cards.splice(destination.index, 0, sourceItem);
+                if (destinationColumn.cards.length > props.maxCardsArray[maxCardsIndex]){
+                    alert(`Cant add anymore cards. This column has reached a limit of  ${props.maxCardsArray[maxCardsIndex]} cards. Please change the limit before adding`)
+                    return;
+                }
             }
             setColumns(updatedColumns);
         }
-
     }
 
     const renderColumns = () => {
         return (
             columns.map((column, index) => {
                 return (
-                    <BoardColumn column={column} columnIndex={index} key={column.id} addCardToColumn={addCardToColumn} modifyCard={modifyCard} deleteCard={deleteCard}/>
+                    <BoardColumn
+                    column={column}
+                    columnIndex={index}
+                    key={column.id}
+                    addCardToColumn={addCardToColumn}
+                    modifyCard={modifyCard}
+                    deleteCard={deleteCard}
+                    deleteColumn={() => deleteColumn(index)}
+                    />
                 )
             })
         )
@@ -120,32 +95,75 @@ const BoardContainer = props => {
     const addNewColumn = () => {
         const newColumn = {
             id : uuid(),
-            columnTitle : uuid(),
+            columnTitle : "New Column",
             cards : [],
         };
         setColumns([...columns, newColumn]);
     }
 
+    const deleteColumn = (columnIndex) => {
+        console.log(columnIndex);
+        if (window.confirm(`You really want to delete column ${columns[columnIndex].columnTitle}`)) {
+            const updatedColumns = [...columns];
+            updatedColumns.splice(columnIndex, 1);
+            setColumns(updatedColumns);
+        }
+    }
+
+    const onMaxCardBtnClick = (index) => {
+        const maxCards = props.maxCardsArray[index];
+        if (columns.find(column => column.cards.length > maxCards) === undefined) // No columns are greater than the new setted value
+            setMaxCardsIndex(index)
+        else
+            alert(`Please Ensure all columns have at most ${props.maxCardsArray[index]} cards`);
+        return;
+        
+    }
+
+    const renderMaxCardsButtons = () => {
+        return props.maxCardsArray.map((item, index) => (
+            <button
+            key={index}
+            type="button"
+            className={`btn btn-light ${index === maxCardsIndex ? "active" : ""}`}
+            onClick={() => onMaxCardBtnClick(index)}
+            >
+            {item === Infinity ? "No Limit" : String(item)}
+            </button>
+        ))
+        
+    }
+
     return (
-        <DragDropContext onDragEnd={onDragEnd}>
-            <div className="w-100 d-flex mt-4" style={{overflowX : 'auto'}}>
-                <Droppable droppableId="AllColumns" type="column" direction="horizontal"> 
-                {(provided) => (
-                    <div className="d-flex" {...provided.droppableProps} ref={provided.innerRef}>      
-                        {renderColumns()}
-                        {provided.placeholder}
-                        <div className="card p-2 align-self-start" onClick={addNewColumn} style={{width : "18rem"}}>
-                            <h6 className="card-title my-1 mr-auto text-success">
+        <div>
+            <Header>
+                <p className="h5 text-white mr-1 mt-1">Max Number Of Cards : </p>
+                <div className="btn-group" role="group" aria-label="Basic example">
+                    {renderMaxCardsButtons()}
+                </div>
+            </ Header>
+            <DragDropContext onDragEnd={onDragEnd}>
+                <div className="w-100 d-flex mt-4" style={{overflow : 'auto'}}>
+                    <Droppable droppableId="AllColumns" type="column" direction="horizontal"> 
+                    {(provided) => (
+                        <div className="d-flex" {...provided.droppableProps} ref={provided.innerRef}>      
+                            {renderColumns()}
+                            {provided.placeholder}
+                            <button className="btn btn-outline-success align-self-start" style={{width : "18rem"}} onClick={addNewColumn}>
                                 Add New Column
                                 <i className="fas fa-plus ml-2" />
-                            </h6>
+                            </button>
                         </div>
-                    </div>
-                )}
-                </Droppable>
-            </div>
-        </DragDropContext>
+                    )}
+                    </Droppable>
+                </div>
+            </DragDropContext>
+        </div>
     )
+}
+
+BoardContainer.defaultProps = {
+    maxCardsArray : [3, 5, 10, Infinity]  
 }
 
 export default BoardContainer;
