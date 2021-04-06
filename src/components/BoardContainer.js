@@ -35,6 +35,12 @@ const BoardContainer = props => {
         setColumns(updatedColumns);
     }
 
+    const modifyColumnName = (columnIndex, columnTitle) => {
+        const updatedColumns = _.cloneDeep(columns);
+        updatedColumns[columnIndex].columnTitle = columnTitle;
+        setColumns(updatedColumns);
+
+    }
     const onDragEnd = (result) => {
         const source = result.source;
         const destination = result.destination;
@@ -86,6 +92,7 @@ const BoardContainer = props => {
                     modifyCard={modifyCard}
                     deleteCard={deleteCard}
                     deleteColumn={() => deleteColumn(index)}
+                    modifyColumnName={(columnTitle) => modifyColumnName(index, columnTitle)}
                     />
                 )
             })

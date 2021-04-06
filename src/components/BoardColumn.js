@@ -9,6 +9,9 @@ const BoardColumn = props => {
     const [show, setShow] = useState(false);
     const [newTitle, setNewTitle] = useState("");
     const [newDescription, setNewDescription] = useState("");
+
+    const [showEditColumn, setShowEditColumn] = useState(false);
+    const [newEditTitle, setNewEditTitle] = useState("")
     
     const renderBoardCards = () => {
         if (props.column.cards.length === 0)
@@ -68,16 +71,14 @@ const BoardColumn = props => {
                     <div className="d-flex">
                         <h5 className="card-title mb-2 flex-grow-1" {...provided.dragHandleProps}>{props.column.columnTitle}</h5>
                         <div className="btn-group-sm btnGroupVisibleOnHover flex-shrink-0">
-                            <button className="btn">
+                            <button className="btn" onClick={props.deleteColumn}>
                                 <i className="far fa-trash-alt my-auto"
                                 style={{color : "red"}}
-                                onClick={props.deleteColumn}
                                 />
                             </button>
-                            <button className="btn">
+                            <button className="btn" onClick={handleEditColumn} >
                                 <i className="fas fa-pencil-alt my-auto ml-2"
                                 style={{color : "blue"}}
-                                onClick={() => 5} 
                                 />
                             </button>
                         </div>
@@ -92,6 +93,17 @@ const BoardColumn = props => {
                 </div>
             </div>
         )
+    }
+
+    const handleEditColumn = () => {
+        setNewEditTitle(props.column.columnTitle);
+        setShowEditColumn(true)
+        return;
+    }
+
+    const editColumnTitleSubmit = () => {
+        setShowEditColumn(false);
+        props.modifyColumnName(newEditTitle);
     }
 
     return (
@@ -119,6 +131,25 @@ const BoardColumn = props => {
                     </Button>
                     <Button variant="primary" onClick={handleAddCardToColumn}>
                         Add Card
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showEditColumn} onHide={() => setShowEditColumn(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{`Editting ${props.column.columnTitle}`}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="form-group">
+                        <label>Column Title</label>
+                        <input className="form-control" value={newEditTitle} onChange={e => setNewEditTitle(e.target.value)} />
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShow(false)}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={editColumnTitleSubmit}>
+                        Submit New Title
                     </Button>
                 </Modal.Footer>
             </Modal>
