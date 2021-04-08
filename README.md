@@ -22,4 +22,6 @@ git clone https://github.com/kyrogex1/surer.git
 
 cd surer
 
+npm install
+
 npm start
