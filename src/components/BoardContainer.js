@@ -8,7 +8,7 @@ import _ from 'lodash';
 
 const BoardContainer = props => {
     const [columns, setColumns] = useState(initialColumns);
-    const [maxCardsIndex, setMaxCardsIndex] = useState(0);
+    const [maxCardsIndex, setMaxCardsIndex] = useState(1);
 
     const addCardToColumn = (columnIndex, cardTitle, cardDescription) => {
         if (columns[columnIndex].cards.length >= props.maxCardsArray[maxCardsIndex]){

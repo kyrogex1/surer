@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { Draggable } from 'react-beautiful-dnd';
-import './BoardCard.css';
 
 const BoardCard = props => {
 
@@ -75,7 +74,7 @@ const BoardCard = props => {
                     </div>
                     <div className="form-group">
                         <label>Card Description</label>
-                        <input className="form-control" value={newDescription} onChange={e => setNewDescription(e.target.value)} />
+                        <textarea className="form-control" rows="6" value={newDescription} onChange={e => setNewDescription(e.target.value)}></textarea>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
